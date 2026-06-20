@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Vasu Bakery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+    <main class="container py-5" style="margin-top: 100px;">
+        <h1 class="display-4 text-center mb-5 scroll-animate">Order Checkout</h1>
+
+        <form id="checkout-form" class="row g-5 needs-validation" novalidate>
+            <!-- Left Side - Customer Details Form -->
+            <div class="col-lg-7 scroll-animate">
+                <div class="card border-light-brown p-4 rounded-4 shadow-2xs">
+                    <h3 class="mb-4 text-chocolate border-bottom pb-2">Delivery Details</h3>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="cust-name" class="form-label">Full Name *</label>
+                            <input type="text" class="form-control" id="cust-name" required placeholder="Enter full name">
+                            <div class="invalid-feedback">Please enter your name.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="cust-phone" class="form-label">Mobile Number *</label>
+                            <input type="tel" class="form-control" id="cust-phone" required placeholder="e.g. +91 98765 43210">
+                            <div class="invalid-feedback">Please enter a valid mobile number.</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="cust-email" class="form-label">Email (Optional)</label>
+                            <input type="email" class="form-control" id="cust-email" placeholder="you@example.com">
+                        </div>
+                        <div class="col-12">
+                            <label for="cust-address" class="form-label">Delivery Address *</label>
+                            <textarea class="form-control" id="cust-address" rows="3" required placeholder="Apartment, Street name, Locality, Landmark, City"></textarea>
+                            <div class="invalid-feedback">Please provide your delivery address.</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="delivery-date" class="form-label">Preferred Delivery Date *</label>
+                            <input type="date" class="form-control" id="delivery-date" required>
+                            <div class="invalid-feedback">Please pick a delivery date.</div>
+                        </div>
+                        <div class="col-12">
+                            <label for="special-instructions" class="form-label">Special Instructions / Egg preference / Message on Cake</label>
+                            <textarea class="form-control" id="special-instructions" rows="2" placeholder="e.g. Write 'Happy Birthday Rahul' on cake, deliver by evening..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card border-light-brown p-4 rounded-4 shadow-2xs mt-4">
+                    <h3 class="mb-4 text-chocolate border-bottom pb-2">Select Payment Method</h3>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="pay-cod" value="Cash On Delivery" checked>
+                        <label class="form-check-label fw-600" for="pay-cod">
+                            <i class="bi bi-cash-stack me-2 text-success"></i>Cash On Delivery (COD)
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="pay-upi" value="UPI QR Code">
+                        <label class="form-check-label fw-600" for="pay-upi">
+                            <i class="bi bi-qr-code-scan me-2 text-primary"></i>Pay via UPI QR (Scan & Pay)
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="paymentMethod" id="pay-razorpay" value="Razorpay Payment Link">
+                        <label class="form-check-label fw-600" for="pay-razorpay">
+                            <i class="bi bi-credit-card me-2 text-danger"></i>Razorpay Payment Link (Card/Netbanking)
+                        </label>
+                    </div>
+
+                    <!-- UPI Dynamic block -->
+                    <div id="upi-qr-block" class="d-none border-top pt-3 mt-3 text-center">
+                        <p class="text-muted small mb-2">Scan the QR code below using GPay, PhonePe, Paytm, or BHIM to pay</p>
+                        <img src="https://placehold.co/200x200/FAF6F0/5C3E35?text=UPI+QR+Code" id="dynamic-upi-qr" alt="UPI Payment QR" class="border p-2 bg-white rounded shadow-2xs mb-2" style="width:200px;">
+                        <p class="mb-1">Or pay to UPI ID: <strong id="upi-id-text">vasubakery@upi</strong></p>
+                        <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill" id="copy-upi-btn">Copy UPI ID</button>
+                    </div>
+
+                    <!-- Razorpay Block -->
+                    <div id="razorpay-link-block" class="d-none border-top pt-3 mt-3 text-center">
+                        <p class="text-muted small">You will receive a Razorpay Payment link via SMS/WhatsApp or click below to pay:</p>
+                        <a href="#" target="_blank" class="btn btn-bakery-pink text-white" id="payment-link-btn">Open Razorpay Payment Page</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Summary and Trigger Order -->
+            <div class="col-lg-5 scroll-animate">
+                <div class="card border-light-brown p-4 rounded-4 shadow-2xs bg-cream">
+                    <h3 class="mb-4 text-chocolate border-bottom pb-2">Your Order Items</h3>
+                    <ul class="list-group list-group-flush mb-4 bg-transparent" id="checkout-items-list">
+                        <!-- Loaded dynamically -->
+                    </ul>
+
+                    <div class="border-top pt-3 mt-3">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <span id="checkout-subtotal">₹0</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-success d-none mb-2" id="checkout-discount-row">
+                            <span>Coupon Discount:</span>
+                            <span>-₹<span id="checkout-discount">0</span></span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-4 text-chocolate fs-4 fw-bold">
+                            <span>Total Payable:</span>
+                            <span id="checkout-total">₹0</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-bakery btn-lg w-100 py-3"><i class="bi bi-whatsapp me-2"></i>Send Order via WhatsApp</button>
+                    <p class="text-center text-muted small mt-3 mb-0">After clicking, you will be redirected to WhatsApp to send your pre-formatted order request directly to the bakery.</p>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module">
+        import CONFIG from './js/config.js';
+        import { getCartSummary, triggerWhatsAppRedirect } from './js/checkout.js';
+        import { loadPromotions, validateCoupon } from './js/promotions.js';
+        import { clearCart } from './js/cart.js';
+
+        let subtotalAmt = 0;
+        let discountAmt = 0;
+        let couponCode = '';
+        let totalPayable = 0;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Set min delivery date as tomorrow
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('delivery-date').min = tomorrow.toISOString().split('T')[0];
+
+            // Render order sum
+            const summary = getCartSummary(0);
+            subtotalAmt = summary.subtotal;
+            totalPayable = summary.subtotal;
+
+            if (summary.cart.length === 0) {
+                window.location.href = 'products.html';
+                return;
+            }
+
+            renderOrderSummaryItems(summary.cart);
+            await checkSavedCoupons();
+
+            // Populate configs
+            document.getElementById('upi-id-text').textContent = CONFIG.upiId;
+            document.getElementById('payment-link-btn').href = CONFIG.razorpayLink;
+            
+            // Build live QR code URL (using google charts API or static dummy)
+            const upiUrl = `upi://pay?pa=${CONFIG.upiId}&pn=${encodeURIComponent(CONFIG.bakeryName)}&am=${totalPayable}&cu=INR`;
+            document.getElementById('dynamic-upi-qr').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
+
+            // Payment toggles
+            document.querySelectorAll('name=["paymentMethod"]').forEach; // check radio triggers
+            const radios = document.getElementsByName('paymentMethod');
+            radios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    const val = e.target.value;
+                    document.getElementById('upi-qr-block').classList.add('d-none');
+                    document.getElementById('razorpay-link-block').classList.add('d-none');
+                    
+                    if (val === 'UPI QR Code') {
+                        document.getElementById('upi-qr-block').classList.remove('d-none');
+                    } else if (val === 'Razorpay Payment Link') {
+                        document.getElementById('razorpay-link-block').classList.remove('d-none');
+                    }
+                });
+            });
+
+            // Copy UPI action
+            document.getElementById('copy-upi-btn').addEventListener('click', () => {
+                navigator.clipboard.writeText(CONFIG.upiId);
+                alert("UPI ID copied: " + CONFIG.upiId);
+            });
+
+            // Form Submit validation
+            const form = document.getElementById('checkout-form');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (!form.checkValidity()) {
+                    e.stopPropagation();
+                    form.classList.add('was-validated');
+                    return;
+                }
+
+                // Generate Order Number
+                const orderNum = 'VB' + Date.now().toString().slice(-6);
+
+                const customer = {
+                    name: document.getElementById('cust-name').value,
+                    phone: document.getElementById('cust-phone').value,
+                    email: document.getElementById('cust-email').value,
+                    address: document.getElementById('cust-address').value,
+                    deliveryDate: document.getElementById('delivery-date').value,
+                    notes: document.getElementById('special-instructions').value,
+                    paymentMethod: document.querySelector('input[name="paymentMethod"]:checked').value,
+                    discount: discountAmt,
+                    couponCode: couponCode
+                };
+
+                const currentSummary = getCartSummary(discountAmt);
+                
+                // Redirect to WhatsApp
+                triggerWhatsAppRedirect(customer, orderNum, currentSummary);
+
+                // Save details in local storage for order confirmation page display
+                localStorage.setItem('last_order_num', orderNum);
+                localStorage.setItem('last_order_details', JSON.stringify({
+                    customer,
+                    summary: currentSummary,
+                    orderNum
+                }));
+
+                // Clear cart state
+                clearCart();
+
+                // Forward to confirmation page
+                setTimeout(() => {
+                    window.location.href = 'order-confirmation.html';
+                }, 1000);
+            });
+        });
+
+        function renderOrderSummaryItems(cart) {
+            const list = document.getElementById('checkout-items-list');
+            list.innerHTML = '';
+            cart.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent';
+                li.innerHTML = `
+                <div>
+                    <h6 class="mb-0 text-chocolate">${item.name} <span class="text-muted font-normal">x ${item.quantity}</span></h6>
+                </div>
+                <span class="fw-bold">₹${item.price * item.quantity}</span>`;
+                list.appendChild(li);
+            });
+            document.getElementById('checkout-subtotal').textContent = `₹${subtotalAmt}`;
+        }
+
+        async function checkSavedCoupons() {
+            couponCode = localStorage.getItem('applied_coupon') || '';
+            if (!couponCode) return;
+
+            const promotions = await loadPromotions();
+            const result = validateCoupon(couponCode, subtotalAmt, promotions);
+            if (result.valid) {
+                discountAmt = result.discount;
+                totalPayable = subtotalAmt - discountAmt;
+                
+                document.getElementById('checkout-discount-row').classList.remove('d-none');
+                document.getElementById('checkout-discount').textContent = discountAmt;
+                document.getElementById('checkout-total').textContent = `₹${totalPayable}`;
+            } else {
+                localStorage.removeItem('applied_coupon');
+                couponCode = '';
+                document.getElementById('checkout-total').textContent = `₹${subtotalAmt}`;
+            }
+        }
+    </script>
+</body>
+</html>

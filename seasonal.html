@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seasonal Specials - Vasu Bakery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        .seasonal-header {
+            background: linear-gradient(rgba(92, 62, 53, 0.8), rgba(92, 62, 53, 0.9)), url('images/hero/banner.webp') no-repeat center center;
+            background-size: cover;
+            color: white;
+            padding: 100px 0 60px 0;
+            margin-top: 80px;
+        }
+        .section-scroll-nav {
+            position: sticky;
+            top: 80px;
+            background-color: var(--color-cream);
+            z-index: 100;
+            border-bottom: 1px solid var(--color-light-brown);
+        }
+    </style>
+</head>
+<body>
+
+    <header class="seasonal-header text-center">
+        <div class="container animate-fade-in-up">
+            <h1 class="display-3 text-white mb-2" id="seasonal-title">Seasonal Specials</h1>
+            <p class="fs-5 text-cream" id="seasonal-subtitle">Delicious treats crafted for festivals and special milestones</p>
+        </div>
+    </header>
+
+    <!-- Sticky Section Nav links -->
+    <div class="section-scroll-nav py-3 mb-5">
+        <div class="container d-flex gap-3 justify-content-center overflow-x-auto">
+            <a href="#festival-cakes" class="btn btn-outline-secondary rounded-pill btn-sm">Festival Cakes</a>
+            <a href="#holiday-specials" class="btn btn-outline-secondary rounded-pill btn-sm">Holiday Specials</a>
+            <a href="#wedding-cakes" class="btn btn-outline-secondary rounded-pill btn-sm">Wedding Cakes</a>
+            <a href="#birthday-packages" class="btn btn-outline-secondary rounded-pill btn-sm">Birthday Packages</a>
+        </div>
+    </div>
+
+    <main class="container mb-5">
+        <div id="seasonal-sections-container">
+            <div class="text-center py-5">
+                <div class="spinner-border text-chocolate" role="status">
+                    <span class="visually-hidden">Loading seasonal catalogue...</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import CONFIG from './js/config.js';
+        window.CONFIG = CONFIG;
+    </script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module">
+        import { loadSeasonal } from './js/products.js';
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            const data = await loadSeasonal();
+            
+            document.getElementById('seasonal-title').textContent = data.bannerTitle || 'Seasonal Specials';
+            document.getElementById('seasonal-subtitle').textContent = data.bannerSubtitle || 'Handcrafted specials';
+            
+            const container = document.getElementById('seasonal-sections-container');
+            container.innerHTML = '';
+            
+            if (data.sections && data.sections.length > 0) {
+                data.sections.forEach(section => {
+                    let itemsHTML = '';
+                    
+                    section.items.forEach(item => {
+                        itemsHTML += `
+                        <div class="col-md-6 scroll-animate">
+                            <div class="card card-bakery h-100 p-3">
+                                <div class="row g-0 align-items-center h-100">
+                                    <div class="col-sm-5">
+                                        <img src="${item.image}" class="img-fluid rounded-3 w-100" style="height: 180px; object-fit: cover;" alt="${item.name}" onerror="this.src='https://placehold.co/200x180/E4D0D0/5C3E35?text=${item.name}'">
+                                    </div>
+                                    <div class="col-sm-7">
+                                        <div class="card-body">
+                                            ${item.badge ? `<span class="badge bg-warning text-dark mb-2">${item.badge}</span>` : ''}
+                                            <h5 class="card-title mb-1">${item.name}</h5>
+                                            <p class="card-text text-muted small mb-2 text-truncate-2" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${item.description}</p>
+                                            <div class="d-flex align-items-center gap-2 mb-3">
+                                                <span class="fs-5 fw-bold text-chocolate">₹${item.price}</span>
+                                                ${item.originalPrice ? `<span class="text-decoration-line-through text-muted small">₹${item.originalPrice}</span>` : ''}
+                                            </div>
+                                            <a href="contact.html?subject=Inquiry regarding ${encodeURIComponent(item.name)}" class="btn btn-bakery-outline btn-sm">Inquire / Book Now</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                    
+                    const secHTML = `
+                    <section id="${section.id}" class="mb-5 pt-4">
+                        <div class="border-bottom pb-2 mb-4 scroll-animate">
+                            <h3 class="display-6">${section.title}</h3>
+                            <p class="text-muted mb-0">${section.subtitle}</p>
+                        </div>
+                        <div class="row g-4">
+                            ${itemsHTML}
+                        </div>
+                    </section>`;
+                    
+                    container.insertAdjacentHTML('beforeend', secHTML);
+                });
+            } else {
+                container.innerHTML = '<div class="alert alert-info text-center">No seasonal specials available at the moment.</div>';
+            }
+        });
+    </script>
+</body>
+</html>

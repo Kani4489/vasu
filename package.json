@@ -1,0 +1,11 @@
+{
+  "name": "vasu-bakery",
+  "version": "1.0.0",
+  "description": "Vasu Bakery Website",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx -y serve ."
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products Catalogue - Vasu Bakery</title>
+    <meta name="description" content="Browse our complete list of fresh pastries, customized birthday cakes, wedding cakes, sweet donuts, and chocolates. Quality baking for local delivery.">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <style>
+        .category-tab {
+            cursor: pointer;
+            padding: 8px 20px;
+            border-radius: 20px;
+            border: 1px solid var(--color-light-brown);
+            white-space: nowrap;
+            transition: var(--transition-smooth);
+            font-weight: 500;
+        }
+        .category-tab:hover, .category-tab.active {
+            background-color: var(--color-chocolate);
+            color: var(--color-cream);
+            border-color: var(--color-chocolate);
+        }
+        .search-box {
+            border: 1px solid var(--color-light-brown);
+            border-radius: 25px;
+            padding-left: 20px;
+            padding-right: 20px;
+            height: 50px;
+            box-shadow: none;
+            transition: var(--transition-smooth);
+        }
+        .search-box:focus {
+            border-color: var(--color-accent-pink);
+            box-shadow: 0 0 8px rgba(212, 165, 165, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <main class="container py-5" style="margin-top: 100px;">
+        <div class="text-center mb-5 scroll-animate">
+            <h1 class="display-4 mb-2">Our Bakery Delights</h1>
+            <p class="text-muted">Freshly prepared with love and premium ingredients daily</p>
+        </div>
+
+        <!-- Search & Filter Controls -->
+        <div class="row g-4 justify-content-between align-items-center mb-5 scroll-animate">
+            <div class="col-md-5 col-lg-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0 rounded-start-pill text-muted"><i class="bi bi-search"></i></span>
+                    <input type="text" id="search-input" class="form-control border-start-0 rounded-end-pill search-box ps-2" placeholder="Search delicious treats...">
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-3 text-md-end">
+                <select id="sort-select" class="form-select rounded-pill border-light-brown py-2">
+                    <option value="popular">Sort: Popularity</option>
+                    <option value="price-low">Sort: Price: Low to High</option>
+                    <option value="price-high">Sort: Price: High to Low</option>
+                    <option value="rating">Sort: Customer Rating</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Category Horizontal scroll -->
+        <div class="d-flex gap-2 overflow-x-auto pb-4 mb-5 scroll-animate" id="categories-tabs">
+            <div class="category-tab active" data-category="All">All Items</div>
+            <!-- Populated dynamically -->
+        </div>
+
+        <!-- Products Grid -->
+        <div class="row g-4" id="products-grid">
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-chocolate" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import CONFIG from './js/config.js';
+        window.CONFIG = CONFIG;
+    </script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module">
+        import { loadProducts } from './js/products.js';
+        import { addToCart } from './js/cart.js';
+
+        let productsList = [];
+        let activeCategory = 'All';
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            const data = await loadProducts();
+            productsList = data.products || [];
+            
+            setupCategoryTabs(data.categories);
+            renderProducts();
+            
+            // Event Listeners
+            document.getElementById('search-input').addEventListener('input', renderProducts);
+            document.getElementById('sort-select').addEventListener('change', renderProducts);
+        });
+
+        function setupCategoryTabs(categories) {
+            const container = document.getElementById('categories-tabs');
+            container.innerHTML = `<div class="category-tab active" data-category="All">All Items</div>`;
+            
+            categories.forEach(cat => {
+                if (cat !== 'All') {
+                    const tab = document.createElement('div');
+                    tab.className = 'category-tab';
+                    tab.setAttribute('data-category', cat);
+                    tab.textContent = cat;
+                    container.appendChild(tab);
+                }
+            });
+            
+            // Hook categories tabs click
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                    activeCategory = e.currentTarget.getAttribute('data-category');
+                    renderProducts();
+                });
+            });
+        }
+
+        function renderProducts() {
+            const grid = document.getElementById('products-grid');
+            const searchVal = document.getElementById('search-input').value.toLowerCase();
+            const sortVal = document.getElementById('sort-select').value;
+            
+            let filtered = productsList;
+            
+            // Filter by Category
+            if (activeCategory !== 'All') {
+                filtered = filtered.filter(p => p.category === activeCategory);
+            }
+            
+            // Filter by Search Query
+            if (searchVal) {
+                filtered = filtered.filter(p => p.name.toLowerCase().includes(searchVal) || p.description.toLowerCase().includes(searchVal));
+            }
+            
+            // Sort
+            if (sortVal === 'price-low') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sortVal === 'price-high') {
+                filtered.sort((a, b) => b.price - a.price);
+            } else if (sortVal === 'rating') {
+                filtered.sort((a, b) => b.rating - a.rating);
+            } else {
+                // Popular (Featured / high reviews first)
+                filtered.sort((a, b) => b.reviews - a.reviews);
+            }
+            
+            grid.innerHTML = '';
+            
+            if (filtered.length === 0) {
+                grid.innerHTML = `<div class="col-12 text-center py-5 text-muted"><i class="bi bi-emoji-frown fs-1"></i><p class="mt-3">No products found matching your filters.</p></div>`;
+                return;
+            }
+            
+            filtered.forEach(product => {
+                const cardHTML = `
+                <div class="col-lg-3 col-md-6 col-sm-12 animate-fade-in-up">
+                    <div class="card card-bakery h-100">
+                        <div class="position-relative">
+                            <a href="product-detail.html?id=${product.id}">
+                                <img src="${product.images[0]}" class="card-img-top" alt="${product.name}" style="height: 230px; object-fit: cover;" onerror="this.src='https://placehold.co/300x230/E4D0D0/5C3E35?text=${product.name}'">
+                            </a>
+                            ${product.badge ? `<span class="badge position-absolute top-0 start-0 m-3 px-3 py-2 bg-chocolate text-cream">${product.badge}</span>` : ''}
+                        </div>
+                        <div class="card-body d-flex flex-column text-center">
+                            <h5 class="card-title mb-1">${product.name}</h5>
+                            <div class="text-warning mb-2 small">
+                                <i class="bi bi-star-fill"></i> ${product.rating} (${product.reviews})
+                            </div>
+                            <p class="card-text text-muted text-truncate mb-3">${product.description}</p>
+                            <div class="mt-auto">
+                                <div class="d-flex justify-content-center align-items-center gap-2 mb-3">
+                                    <span class="fs-5 fw-bold text-chocolate">₹${product.price}</span>
+                                    ${product.originalPrice ? `<span class="text-decoration-line-through text-muted small">₹${product.originalPrice}</span>` : ''}
+                                </div>
+                                <div class="d-flex gap-2 justify-content-center">
+                                    <a href="product-detail.html?id=${product.id}" class="btn btn-outline-secondary btn-sm rounded-pill"><i class="bi bi-eye"></i> View</a>
+                                    <button class="btn btn-bakery btn-sm btn-add-cart rounded-pill" data-id="${product.id}"><i class="bi bi-cart-plus"></i> Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+                grid.insertAdjacentHTML('beforeend', cardHTML);
+            });
+            
+            // Re-assign listeners
+            document.querySelectorAll('.btn-add-cart').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    const product = productsList.find(p => p.id === id);
+                    if (product) addToCart(product, 1);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

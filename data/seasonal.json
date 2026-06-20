@@ -1,0 +1,123 @@
+{
+  "currentSeason": "Summer",
+  "bannerTitle": "Summer Sweet Treats",
+  "bannerSubtitle": "Refreshing flavors crafted for the season",
+  "sections": [
+    {
+      "id": "festival-cakes",
+      "title": "Festival Cakes",
+      "subtitle": "Celebrate every festival with our special edition cakes",
+      "items": [
+        {
+          "id": "s001",
+          "name": "Diwali Celebration Cake",
+          "description": "A grand celebration cake adorned with edible diyas, rangoli patterns, and gold leaf. Available in Kaju Katli and Gulab Jamun flavored layers.",
+          "price": 1800,
+          "originalPrice": 2200,
+          "image": "images/products/diwali-box.jpg",
+          "badge": "Festival Special",
+          "availableFrom": "2026-10-01",
+          "availableUntil": "2026-11-15"
+        },
+        {
+          "id": "s002",
+          "name": "Eid Mubarak Cake",
+          "description": "A beautifully decorated crescent moon and star cake with rose and pistachio flavors. Perfect for Eid celebrations.",
+          "price": 1600,
+          "originalPrice": 1900,
+          "image": "images/products/red-velvet-cake.jpg",
+          "badge": "Festival Special",
+          "availableFrom": "2026-03-01",
+          "availableUntil": "2026-04-30"
+        }
+      ]
+    },
+    {
+      "id": "holiday-specials",
+      "title": "Holiday Specials",
+      "subtitle": "Limited-edition treats for the holiday season",
+      "items": [
+        {
+          "id": "s003",
+          "name": "Mango Season Cake",
+          "description": "Fresh Alphonso mango cream cake — our most loved summer creation. Made with 100% real Alphonso mangoes.",
+          "price": 700,
+          "originalPrice": 850,
+          "image": "images/products/mango-cake.jpg",
+          "badge": "Summer Special",
+          "availableFrom": "2026-04-01",
+          "availableUntil": "2026-07-31"
+        },
+        {
+          "id": "s004",
+          "name": "Christmas Plum Cake",
+          "description": "A rich, moist Christmas fruit cake soaked in rum and loaded with dry fruits, nuts, and warm spices. Made months in advance for the perfect flavor.",
+          "price": 950,
+          "originalPrice": 1200,
+          "image": "images/products/black-forest-cake.jpg",
+          "badge": "Christmas Special",
+          "availableFrom": "2026-12-01",
+          "availableUntil": "2026-12-31"
+        }
+      ]
+    },
+    {
+      "id": "wedding-cakes",
+      "title": "Wedding Cakes",
+      "subtitle": "Make your special day unforgettable with our bespoke wedding cakes",
+      "items": [
+        {
+          "id": "s005",
+          "name": "Classic 3-Tier Wedding Cake",
+          "description": "Elegant white fondant 3-tier cake with sugar roses, pearl beading, and gold ribbon. Customizable flavors and design.",
+          "price": 8500,
+          "originalPrice": 10000,
+          "image": "images/products/wedding-cake.jpg",
+          "badge": "Premium",
+          "availableFrom": null,
+          "availableUntil": null
+        },
+        {
+          "id": "s006",
+          "name": "Floral Garden Cake (2-tier)",
+          "description": "Rustic 2-tier wedding cake adorned with fresh edible flowers, lush greenery, and a naked cake aesthetic. Perfect for garden weddings.",
+          "price": 5500,
+          "originalPrice": 6500,
+          "image": "images/products/floral-wedding-cake.jpg",
+          "badge": "Trending",
+          "availableFrom": null,
+          "availableUntil": null
+        }
+      ]
+    },
+    {
+      "id": "birthday-packages",
+      "title": "Birthday Packages",
+      "subtitle": "Complete party packages to make every birthday magical",
+      "items": [
+        {
+          "id": "s007",
+          "name": "Kids Birthday Package",
+          "description": "Princess/Superhero theme 1kg cake + 12 themed cupcakes + 24 butter cookies. Comes with free candles and birthday card.",
+          "price": 1999,
+          "originalPrice": 2500,
+          "image": "images/products/birthday-cake.jpg",
+          "badge": "Best Value",
+          "availableFrom": null,
+          "availableUntil": null
+        },
+        {
+          "id": "s008",
+          "name": "Premium Adult Birthday Package",
+          "description": "Custom 2kg designer cake + 24 cupcakes + Belgian Chocolate Truffles (12 pcs) + Choco Chip Cookies (24 pcs). Premium packaging included.",
+          "price": 3499,
+          "originalPrice": 4200,
+          "image": "images/products/chocolate-truffle-cake.jpg",
+          "badge": "Premium",
+          "availableFrom": null,
+          "availableUntil": null
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+:root {
+    --color-cream: #FAF6F0;
+    --color-light-brown: #E4D0D0;
+    --color-chocolate: #5C3E35;
+    --color-chocolate-dark: #3E2723;
+    --color-soft-pink: #F9E2E2;
+    --color-accent-pink: #D4A5A5;
+    --font-heading: 'Playfair Display', serif;
+    --font-body: 'Inter', sans-serif;
+    --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+body {
+    background-color: var(--color-cream);
+    color: var(--color-chocolate-dark);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    color: var(--color-chocolate);
+    font-weight: 700;
+}
+
+/* Custom Buttons */
+.scroll-animate {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+.scroll-animate.animate-fade-in-up {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.btn-bakery {
+    background-color: var(--color-chocolate);
+    color: var(--color-cream);
+    border: 2px solid var(--color-chocolate);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    padding: 0.6rem 1.8rem;
+    border-radius: 30px;
+    transition: var(--transition-smooth);
+}
+
+.btn-bakery:hover {
+    background-color: transparent;
+    color: var(--color-chocolate);
+    transform: translateY(-2px);
+}
+
+.btn-bakery-outline {
+    background-color: transparent;
+    color: var(--color-chocolate);
+    border: 2px solid var(--color-chocolate);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    padding: 0.6rem 1.8rem;
+    border-radius: 30px;
+    transition: var(--transition-smooth);
+}
+
+.btn-bakery-outline:hover {
+    background-color: var(--color-chocolate);
+    color: var(--color-cream);
+    transform: translateY(-2px);
+}
+
+.btn-bakery-pink {
+    background-color: var(--color-accent-pink);
+    color: var(--color-chocolate-dark);
+    border: 2px solid var(--color-accent-pink);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    padding: 0.6rem 1.8rem;
+    border-radius: 30px;
+    transition: var(--transition-smooth);
+}
+
+.btn-bakery-pink:hover {
+    background-color: transparent;
+    color: var(--color-chocolate-dark);
+    border-color: var(--color-chocolate-dark);
+    transform: translateY(-2px);
+}
+
+/* Navbar customization */
+.navbar-bakery {
+    background-color: rgba(250, 246, 240, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--color-light-brown);
+}
+
+.navbar-brand-bakery {
+    font-family: var(--font-heading);
+    color: var(--color-chocolate) !important;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.nav-link-bakery {
+    color: var(--color-chocolate-dark) !important;
+    font-weight: 500;
+    transition: var(--transition-smooth);
+    position: relative;
+}
+
+.nav-link-bakery:hover, .nav-link-bakery.active {
+    color: var(--color-accent-pink) !important;
+}
+
+.nav-link-bakery::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    background-color: var(--color-accent-pink);
+    transition: var(--transition-smooth);
+    transform: translateX(-50%);
+}
+
+.nav-link-bakery:hover::after, .nav-link-bakery.active::after {
+    width: 80%;
+}
+
+/* Floating WhatsApp Button */
+.whatsapp-float {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #25d366;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: var(--transition-smooth);
+    text-decoration: none;
+}
+
+.whatsapp-float:hover {
+    transform: scale(1.1) rotate(15deg);
+    color: white;
+}
+
+/* Card Enhancements */
+.card-bakery {
+    background-color: white;
+    border: 1px solid var(--color-light-brown);
+    border-radius: 15px;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+}
+
+.card-bakery:hover {
+    transform: translateY(-8px);
+    box-shadow: 0px 10px 25px rgba(92, 62, 53, 0.1);
+}
+
+/* Footer styling */
+footer {
+    background-color: var(--color-chocolate-dark);
+    color: var(--color-cream);
+    padding: 5rem 0 2rem 0;
+}
+
+footer a {
+    color: var(--color-light-brown);
+    text-decoration: none;
+    transition: var(--transition-smooth);
+}
+
+footer a:hover {
+    color: var(--color-soft-pink);
+    padding-left: 5px;
+}

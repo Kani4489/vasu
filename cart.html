@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Vasu Bakery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+    <main class="container py-5" style="margin-top: 100px;">
+        <h1 class="display-4 text-center mb-5 scroll-animate">Your Shopping Cart</h1>
+
+        <div class="row g-5">
+            <!-- Left Side - Cart Items -->
+            <div class="col-lg-8 scroll-animate">
+                <div class="card border-light-brown p-4 rounded-4 shadow-2xs">
+                    <div id="cart-empty-message" class="text-center py-5 d-none">
+                        <i class="bi bi-cart-x fs-1 text-muted"></i>
+                        <h3 class="mt-3">Your cart is empty!</h3>
+                        <p class="text-muted">Fill it up with delicious bakery items from our menu.</p>
+                        <a href="products.html" class="btn btn-bakery mt-2">Go Shopping</a>
+                    </div>
+
+                    <div id="cart-table-container">
+                        <div class="table-responsive">
+                            <table class="table align-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="min-width: 250px;">Product</th>
+                                        <th scope="col" class="text-center">Quantity</th>
+                                        <th scope="col" class="text-end">Price</th>
+                                        <th scope="col" class="text-end">Total</th>
+                                        <th scope="col" class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cart-items-body">
+                                    <!-- Populated dynamically by cart.js script -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side - Summary Card -->
+            <div class="col-lg-4 scroll-animate" id="summary-section">
+                <div class="card border-light-brown p-4 rounded-4 shadow-2xs bg-white">
+                    <h3 class="mb-4 text-chocolate border-bottom pb-2">Order Summary</h3>
+
+                    <div class="mb-4">
+                        <label for="coupon-input" class="form-label text-muted small">Have a Coupon Code?</label>
+                        <div class="input-group">
+                            <input type="text" id="coupon-input" class="form-control border-light-brown rounded-start" placeholder="e.g. VASU50">
+                            <button class="btn btn-bakery-pink text-white rounded-end" id="coupon-apply-btn">Apply</button>
+                        </div>
+                        <div id="coupon-feedback" class="small mt-2"></div>
+                    </div>
+
+                    <ul class="list-group list-group-flush mb-4">
+                        <li class="list-group-item d-flex justify-content-between px-0 bg-transparent">
+                            <span>Subtotal</span>
+                            <span id="summary-subtotal">₹0</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0 bg-transparent text-success d-none" id="summary-discount-row">
+                            <span>Discount <span class="badge bg-success" id="applied-coupon-badge">VASU50</span></span>
+                            <span>-₹<span id="summary-discount-amount">0</span></span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0 bg-transparent">
+                            <span>Delivery</span>
+                            <span class="text-success fw-bold">FREE Delivery</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between px-0 bg-transparent fs-4 fw-bold text-chocolate border-top">
+                            <span>Total Amount</span>
+                            <span id="summary-total">₹0</span>
+                        </li>
+                    </ul>
+
+                    <a href="checkout.html" class="btn btn-bakery w-100 py-3 text-center" id="checkout-btn">Proceed to Checkout</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import CONFIG from './js/config.js';
+        window.CONFIG = CONFIG;
+    </script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module">
+        import { getCart, updateCartQuantity, removeFromCart } from './js/cart.js';
+        import { loadPromotions, validateCoupon } from './js/promotions.js';
+
+        let promotions = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            promotions = await loadPromotions();
+            renderCart();
+
+            // Set up Coupon Apply Button
+            document.getElementById('coupon-apply-btn').addEventListener('click', applyCouponCode);
+            
+            // Check if coupon already applied previously
+            const savedCoupon = localStorage.getItem('applied_coupon');
+            if (savedCoupon) {
+                document.getElementById('coupon-input').value = savedCoupon;
+                applyCouponCode();
+            }
+        });
+
+        function renderCart() {
+            const cart = getCart();
+            const emptyMsg = document.getElementById('cart-empty-message');
+            const tableContainer = document.getElementById('cart-table-container');
+            const summarySec = document.getElementById('summary-section');
+            const itemsBody = document.getElementById('cart-items-body');
+
+            if (cart.length === 0) {
+                emptyMsg.classList.remove('d-none');
+                tableContainer.classList.add('d-none');
+                summarySec.classList.add('d-none');
+                return;
+            }
+
+            emptyMsg.classList.add('d-none');
+            tableContainer.classList.remove('d-none');
+            summarySec.classList.remove('d-none');
+
+            itemsBody.innerHTML = '';
+            let subtotal = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                subtotal += itemTotal;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td>
+                    <div class="d-flex align-items-center">
+                        <img src="${item.image}" class="img-fluid rounded-3 me-3" style="width: 60px; height: 60px; object-fit: cover;" alt="${item.name}" onerror="this.src='https://placehold.co/600/E4D0D0/5C3E35?text=Cake'">
+                        <div>
+                            <h6 class="mb-0 text-chocolate">${item.name}</h6>
+                            <span class="text-muted small">${item.category}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-center">
+                    <div class="input-group input-group-sm mx-auto" style="width: 100px;">
+                        <button class="btn btn-outline-secondary btn-minus" data-id="${item.id}"><i class="bi bi-dash"></i></button>
+                        <input type="text" class="form-control text-center qty-val" value="${item.quantity}" readonly>
+                        <button class="btn btn-outline-secondary btn-plus" data-id="${item.id}"><i class="bi bi-plus"></i></button>
+                    </div>
+                </td>
+                <td class="text-end">₹${item.price}</td>
+                <td class="text-end fw-bold text-chocolate">₹${itemTotal}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-danger border-0 btn-remove" data-id="${item.id}"><i class="bi bi-trash"></i></button>
+                </td>`;
+                itemsBody.appendChild(tr);
+            });
+
+            document.getElementById('summary-subtotal').textContent = `₹${subtotal}`;
+            updateTotalAmounts(subtotal);
+
+            // Quantity adjust event listeners
+            document.querySelectorAll('.btn-minus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    const item = cart.find(x => x.id === id);
+                    if (item && item.quantity > 1) {
+                        updateCartQuantity(id, item.quantity - 1);
+                        renderCart();
+                        // Re-validate coupon if applied
+                        applyCouponCode(true);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.btn-plus').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    const item = cart.find(x => x.id === id);
+                    if (item) {
+                        updateCartQuantity(id, item.quantity + 1);
+                        renderCart();
+                        applyCouponCode(true);
+                    }
+                });
+            });
+
+            // Trash remove listener
+            document.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    removeFromCart(id);
+                    renderCart();
+                    applyCouponCode(true);
+                });
+            });
+        }
+
+        function applyCouponCode(silent = false) {
+            const code = document.getElementById('coupon-input').value.toUpperCase();
+            const subtotal = getCart().reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            const feedback = document.getElementById('coupon-feedback');
+            const discountRow = document.getElementById('summary-discount-row');
+
+            if (!code) {
+                if (!silent) {
+                    feedback.textContent = "Please enter a coupon code.";
+                    feedback.className = "small mt-2 text-danger";
+                }
+                discountRow.classList.add('d-none');
+                localStorage.removeItem('applied_coupon');
+                updateTotalAmounts(subtotal, 0);
+                return;
+            }
+
+            const result = validateCoupon(code, subtotal, promotions);
+            if (result.valid) {
+                feedback.textContent = result.message;
+                feedback.className = "small mt-2 text-success";
+                
+                discountRow.classList.remove('d-none');
+                document.getElementById('applied-coupon-badge').textContent = code;
+                document.getElementById('summary-discount-amount').textContent = result.discount;
+                
+                localStorage.setItem('applied_coupon', code);
+                updateTotalAmounts(subtotal, result.discount);
+            } else {
+                if (!silent) {
+                    feedback.textContent = result.message;
+                    feedback.className = "small mt-2 text-danger";
+                }
+                discountRow.classList.add('d-none');
+                localStorage.removeItem('applied_coupon');
+                updateTotalAmounts(subtotal, 0);
+            }
+        }
+
+        function updateTotalAmounts(subtotal, discount = 0) {
+            const finalTotal = Math.max(0, subtotal - discount);
+            document.getElementById('summary-total').textContent = `₹${finalTotal}`;
+        }
+    </script>
+</body>
+</html>

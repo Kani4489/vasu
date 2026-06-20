@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmed - Vasu Bakery</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+
+    <main class="container py-5" style="margin-top: 100px;">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 text-center scroll-animate">
+                <div class="mb-4">
+                    <i class="bi bi-check-circle-fill text-success" style="font-size: 5rem;"></i>
+                </div>
+                <h1 class="display-4 text-chocolate mb-2">Thank You for Your Order!</h1>
+                <p class="fs-5 text-muted mb-5">Your order has been generated and details have been prepared for WhatsApp notification.</p>
+
+                <div class="card border-light-brown p-4 rounded-4 shadow-sm text-start mb-5 bg-white">
+                    <div class="d-flex justify-content-between border-bottom pb-3 mb-3">
+                        <h4 class="text-chocolate mb-0">Order Summary</h4>
+                        <span class="badge bg-chocolate text-cream fs-6 px-3 py-2" id="conf-order-num">#VB123456</span>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <span class="text-muted small d-block">Deliver To:</span>
+                            <strong id="conf-cust-name">Customer Name</strong>
+                            <p class="mb-0 text-muted small" id="conf-cust-address">Delivery Address</p>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <span class="text-muted small d-block">Delivery Date:</span>
+                            <strong id="conf-delivery-date">Date</strong>
+                            <span class="text-muted small d-block mt-2">Payment Option:</span>
+                            <strong id="conf-payment-method">COD</strong>
+                        </div>
+                    </div>
+
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th class="text-center">Qty</th>
+                                <th class="text-end">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="conf-items-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="2" class="text-end text-muted small">Subtotal:</td>
+                                <td class="text-end" id="conf-subtotal">₹0</td>
+                            </tr>
+                            <tr id="conf-discount-row" class="d-none">
+                                <td colspan="2" class="text-end text-success small">Coupon Discount:</td>
+                                <td class="text-end text-success" id="conf-discount">-₹0</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="text-end fw-bold text-chocolate">Total Paid/Payable:</td>
+                                <td class="text-end fw-bold text-chocolate fs-5" id="conf-total">₹0</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="products.html" class="btn btn-bakery">Back to Shopping</a>
+                    <button class="btn btn-success" id="resend-wa-btn"><i class="bi bi-whatsapp me-2"></i>Re-open WhatsApp Chat</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/main.js"></script>
+    <script type="module">
+        import { generateWhatsAppMessage } from './js/checkout.js';
+        import CONFIG from './js/config.js';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const rawData = localStorage.getItem('last_order_details');
+            if (!rawData) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const data = JSON.parse(rawData);
+            const customer = data.customer;
+            const summary = data.summary;
+
+            // Populate text
+            document.getElementById('conf-order-num').textContent = `#${data.orderNum}`;
+            document.getElementById('conf-cust-name').textContent = customer.name;
+            document.getElementById('conf-cust-address').textContent = customer.address;
+            document.getElementById('conf-delivery-date').textContent = customer.deliveryDate;
+            document.getElementById('conf-payment-method').textContent = customer.paymentMethod;
+
+            document.getElementById('conf-subtotal').textContent = `₹${summary.subtotal}`;
+            if (customer.discount > 0) {
+                document.getElementById('conf-discount-row').classList.remove('d-none');
+                document.getElementById('conf-discount').textContent = `-₹${customer.discount}`;
+            }
+            document.getElementById('conf-total').textContent = `₹${summary.total}`;
+
+            // Render table items
+            const tbody = document.getElementById('conf-items-body');
+            tbody.innerHTML = '';
+            summary.cart.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                <td>${item.name}</td>
+                <td class="text-center">${item.quantity}</td>
+                <td class="text-end">₹${item.price * item.quantity}</td>`;
+                tbody.appendChild(tr);
+            });
+
+            // Resend action
+            document.getElementById('resend-wa-btn').addEventListener('click', () => {
+                const message = generateWhatsAppMessage(customer, data.orderNum, summary);
+                const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${message}`;
+                window.open(url, '_blank');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+{
+  "coupons": [
+    {
+      "code": "WELCOME10",
+      "description": "10% off on your first order",
+      "type": "percentage",
+      "value": 10,
+      "minOrder": 200,
+      "maxDiscount": 200,
+      "validUntil": "2026-12-31",
+      "isActive": true,
+      "usageLimit": 1
+    },
+    {
+      "code": "VASU50",
+      "description": "Flat ₹50 off on orders above ₹500",
+      "type": "flat",
+      "value": 50,
+      "minOrder": 500,
+      "maxDiscount": 50,
+      "validUntil": "2026-12-31",
+      "isActive": true,
+      "usageLimit": null
+    },
+    {
+      "code": "SWEET15",
+      "description": "15% off on cakes",
+      "type": "percentage",
+      "value": 15,
+      "minOrder": 600,
+      "maxDiscount": 300,
+      "validUntil": "2026-08-31",
+      "isActive": true,
+      "usageLimit": null
+    },
+    {
+      "code": "BIRTHDAY20",
+      "description": "20% off on birthday cakes",
+      "type": "percentage",
+      "value": 20,
+      "minOrder": 800,
+      "maxDiscount": 400,
+      "validUntil": "2026-12-31",
+      "isActive": true,
+      "usageLimit": null
+    }
+  ],
+  "comboOffers": [
+    {
+      "id": "combo001",
+      "title": "Birthday Party Combo",
+      "description": "1 Designer Birthday Cake (1kg) + 12 Cupcakes + 24 Butter Cookies",
+      "originalPrice": 1620,
+      "offerPrice": 1299,
+      "savings": 321,
+      "items": ["p004", "p008", "p010"],
+      "image": "images/products/birthday-cake.jpg",
+      "badge": "Save ₹321",
+      "isActive": true
+    },
+    {
+      "id": "combo002",
+      "title": "Sweet Breakfast Box",
+      "description": "6 Cinnamon Rolls + 6 Almond Croissants + 1 Garlic Bread",
+      "originalPrice": 1065,
+      "offerPrice": 849,
+      "savings": 216,
+      "items": ["p013", "p012", "p014"],
+      "image": "images/products/cinnamon-roll.jpg",
+      "badge": "Save ₹216",
+      "isActive": true
+    },
+    {
+      "id": "combo003",
+      "title": "Chocolate Lovers Bundle",
+      "description": "Chocolate Truffle Cake + 6 Chocolate Cupcakes + Belgian Chocolate Truffles",
+      "originalPrice": 1550,
+      "offerPrice": 1199,
+      "savings": 351,
+      "items": ["p003", "p009", "p018"],
+      "image": "images/products/chocolate-truffle-cake.jpg",
+      "badge": "Save ₹351",
+      "isActive": true
+    }
+  ],
+  "limitedOffers": [
+    {
+      "id": "ltd001",
+      "title": "Weekend Special",
+      "description": "20% off on all Pastries this weekend only!",
+      "type": "percentage",
+      "value": 20,
+      "category": "Pastries",
+      "expiresAt": "2026-06-15T23:59:59",
+      "badge": "Weekend Only",
+      "isActive": true
+    },
+    {
+      "id": "ltd002",
+      "title": "Morning Freshness",
+      "description": "Buy 2 Donuts, Get 1 FREE every morning before 10 AM",
+      "type": "bogo",
+      "value": 1,
+      "category": "Donuts",
+      "validTime": "08:00-10:00",
+      "badge": "Morning Deal",
+      "isActive": true
+    }
+  ]
+}
